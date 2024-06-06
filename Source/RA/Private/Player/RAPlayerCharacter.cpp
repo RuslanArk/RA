@@ -45,6 +45,13 @@ ARAPlayerCharacter::ARAPlayerCharacter()
 	FollowCamera->bUsePawnControlRotation = false;
 }
 
+void ARAPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	
+}
+
 void ARAPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
