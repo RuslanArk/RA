@@ -1,6 +1,10 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "RACharacter.h"
+#include "Player/RACharacter.h"
+
+#include "AbilitySystem/RAAbilitySystemComponent.h"
+
+#include "AbilitySystemComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -58,6 +62,18 @@ void ARACharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+}
+
+void ARACharacter::GiveDefaultAbilities()
+{
+	check(AbilitySystemComponent);
+	if (!HasAuthority()) return;
+
+	for (TSubclassOf<UGameplayAbility> AbilityClass : DefaultAbilities)
+	{
+		const FGameplayAbilitySpec AbilitySpec { AbilityClass, 1 };
+		AbilitySystemComponent->GiveAbility(AbilitySpec);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -127,4 +143,9 @@ void ARACharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+UAbilitySystemComponent* ARACharacter::GetAbilitySystemComponent() const
+{
+	return Cast<UAbilitySystemComponent>(AbilitySystemComponent);
 }

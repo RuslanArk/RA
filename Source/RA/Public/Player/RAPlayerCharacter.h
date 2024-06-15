@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Player/RACharacter.h"
 #include "RAPlayerCharacter.generated.h"
+
+class ARAProjectile;
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -12,47 +14,36 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 
-
 UCLASS()
-class RA_API ARAPlayerCharacter : public ACharacter
+class RA_API ARAPlayerCharacter : public ARACharacter
 {
 	GENERATED_BODY()
 
 public:
 	ARAPlayerCharacter();	
 
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-	
 	virtual void BeginPlay();
+
+private:
+	void InitAbilitySystemComponent();
 	
-	void Move(const FInputActionValue& Value);
-
-	void Look(const FInputActionValue& Value);
-
-public:
-	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Primary Attack")
+	TSubclassOf<ARAProjectile> PrimaryProjectileClass = nullptr;
+	
 private:	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* CameraBoom;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* FollowCamera;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
-
+	FTimerHandle AttackTimer;
+	
+	bool bIsAttacking = false;
+	float AttackRate = 0.33f;
+	
 };

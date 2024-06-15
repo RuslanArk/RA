@@ -8,12 +8,21 @@ public class RA : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { 
+		PublicDependencyModuleNames.AddRange(new string[] 
+		{ 
             "Core",
             "CoreUObject",
             "Engine", 
             "InputCore", 
-            "EnhancedInput"
+            "EnhancedInput",
+            "GameplayAbilities",
+            "GameplayTags",
+            "GameplayTasks",
         });
+		
+		PublicIncludePaths.AddRange(new string[]
+		{
+			"RA/",
+		});
 	}
 }
