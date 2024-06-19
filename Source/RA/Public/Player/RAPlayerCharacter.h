@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Player/RACharacter.h"
 #include "RAPlayerCharacter.generated.h"
 
@@ -27,19 +28,62 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	virtual void BeginPlay();
 
+	void Move(const FInputActionValue& Value);
+
+	void Look(const FInputActionValue& Value);
+
+	void ActivatePrimary();
+
+	virtual void ActivatePrimaryAbility(const FGameplayTagContainer& PrimaryTags) override;
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+
 private:
 	void InitAbilitySystemComponent();
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTagContainer TestTagsContainer;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Primary Attack")
-	TSubclassOf<ARAProjectile> PrimaryProjectileClass = nullptr;
+	TSubclassOf<ARAProjectile> PrimaryProjectileClass = nullptr;	
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	USpringArmComponent* CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* FollowCamera;
 	
-private:	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputMappingContext* MovementMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* JumpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* LookAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputMappingContext* CombatMappingContext;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ActivatePrimaryAbilityAction;
 	
 	FTimerHandle AttackTimer;
 	
