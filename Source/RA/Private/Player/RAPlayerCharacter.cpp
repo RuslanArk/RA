@@ -42,21 +42,24 @@ void ARAPlayerCharacter::InitAbilitySystemComponent()
 	AbilitySystemComponent = CastChecked<URAAbilitySystemComponent>(RAPlayerState->GetAbilitySystemComponent());
 
 	AbilitySystemComponent->InitAbilityActorInfo(RAPlayerState, this);
+	AttributeSet = RAPlayerState->GetAttributes();
 }
-
+// Is called only on the server
 void ARAPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
 	InitAbilitySystemComponent();
 	GiveDefaultAbilities();
+	InitDefaultAttributes();
 }
-
+// Is called on Client when PlayerState is changed
 void ARAPlayerCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
 	InitAbilitySystemComponent();
+	InitDefaultAttributes();
 }
 
 UAbilitySystemComponent* ARAPlayerCharacter::GetAbilitySystemComponent() const

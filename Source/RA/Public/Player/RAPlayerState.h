@@ -8,6 +8,8 @@
 #include "RAPlayerState.generated.h"
 
 class URAAbilitySystemComponent;
+class URAAttributes;
+class UGameplayEffect;
 
 UCLASS()
 class RA_API ARAPlayerState : public APlayerState, public IAbilitySystemInterface
@@ -18,13 +20,20 @@ public:
 	ARAPlayerState();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual URAAttributes* GetAttributes() const;
 	
 protected:
 	virtual void BeginPlay() override;
 
-public:
+protected:
 	UPROPERTY()	
 	TObjectPtr<URAAbilitySystemComponent> AbilitySystemComponent;
+	
+	UPROPERTY()
+	TObjectPtr<URAAttributes> AttributeSet;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Ability")
+	TSubclassOf<UGameplayEffect> DefaultAttributesEffect;
 
 		
 };

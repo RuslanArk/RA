@@ -9,9 +9,6 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
-#include "InputActionValue.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -63,6 +60,21 @@ void ARACharacter::GiveDefaultAbilities()
 	}
 }
 
+void ARACharacter::InitDefaultAttributes()
+{
+	if (!AbilitySystemComponent || !DefaultAttributesEffect) return;
+
+	FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+
+	const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributesEffect, 1.f, EffectContext);
+
+	if (SpecHandle.IsValid())
+	{
+		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	}
+}
+
 void ARACharacter::ActivatePrimaryAbility(const FGameplayTagContainer& PrimaryTags)
 {
 	if (UAbilitySystemComponent* AbilitySystemComp = GetAbilitySystemComponent())
@@ -74,4 +86,9 @@ void ARACharacter::ActivatePrimaryAbility(const FGameplayTagContainer& PrimaryTa
 UAbilitySystemComponent* ARACharacter::GetAbilitySystemComponent() const
 {
 	return Cast<UAbilitySystemComponent>(AbilitySystemComponent);
+}
+
+URAAttributes* ARACharacter::GetAttributeSet() const
+{
+	return AttributeSet;
 }

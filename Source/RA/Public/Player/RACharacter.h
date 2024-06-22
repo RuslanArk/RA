@@ -8,15 +8,11 @@
 #include "Logging/LogMacros.h"
 #include "RACharacter.generated.h"
 
+class URAAttributes;
 struct FGameplayTagContainer;
 class UGameplayAbility;
 class URAAbilitySystemComponent;
-
-class USpringArmComponent;
-class UCameraComponent;
-class UInputMappingContext;
-class UInputAction;
-struct FInputActionValue;
+class UGameplayEffect;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -31,21 +27,31 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	UFUNCTION(BlueprintCallable)
+	virtual URAAttributes* GetAttributeSet() const;
+
 	// To add mapping context
 	virtual void BeginPlay();
 
 	void GiveDefaultAbilities();
+	void InitDefaultAttributes();
 
 protected:
 	UFUNCTION(BlueprintCallable)
 	virtual void ActivatePrimaryAbility(const FGameplayTagContainer& PrimaryTags);
 
-protected:	
+protected:
 	UPROPERTY()
 	TObjectPtr<URAAbilitySystemComponent> AbilitySystemComponent;
 
+	UPROPERTY()
+	TObjectPtr<URAAttributes> AttributeSet;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Ability")
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Ability")
+	TSubclassOf<UGameplayEffect> DefaultAttributesEffect;
 
 };
 

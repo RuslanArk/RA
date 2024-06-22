@@ -42,6 +42,11 @@ void URAAttributes::PostGameplayEffectExecute(const FGameplayEffectModCallbackDa
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 	}
+
+	// ACCESSING Actor Location via Data
+	//UAbilitySystemComponent* AbilityComponent = Data.EffectSpec.GetContext().GetInstigatorAbilitySystemComponent();
+	//AActor* ASCOwner = AbilityComponent->AbilityActorInfo->OwnerActor.Get();
+	//ASCOwner->GetActorLocation();
 }
 
 void URAAttributes::OnRep_Health(const FGameplayAttributeData& OldHealth)

@@ -4,6 +4,7 @@
 #include "Enemies/RAEnemyCharacter.h"
 
 #include "AbilitySystem/RAAbilitySystemComponent.h"
+#include "AbilitySystem/AttributeSets/RAAttributes.h"
 
 
 ARAEnemyCharacter::ARAEnemyCharacter()
@@ -12,6 +13,8 @@ ARAEnemyCharacter::ARAEnemyCharacter()
 
 	AbilitySystemComponent = CreateDefaultSubobject<URAAbilitySystemComponent>("Ability System Component");
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+
+	AttributeSet = CreateDefaultSubobject<URAAttributes>("Attributes");
 }
 
 void ARAEnemyCharacter::BeginPlay()
@@ -20,4 +23,5 @@ void ARAEnemyCharacter::BeginPlay()
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	GiveDefaultAbilities();
+	InitDefaultAttributes();
 }
