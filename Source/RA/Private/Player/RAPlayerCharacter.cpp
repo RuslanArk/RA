@@ -150,7 +150,7 @@ void ARAPlayerCharacter::Look(const FInputActionValue& Value)
 
 void ARAPlayerCharacter::ActivatePrimary()
 {
-	ActivatePrimaryAbility(TestTagsContainer);
+	ActivatePrimaryAbility(PrimaryAbilityTagsContainer);
 }
 
 void ARAPlayerCharacter::ActivatePrimaryAbility(const FGameplayTagContainer& PrimaryTags)

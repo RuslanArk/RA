@@ -54,7 +54,7 @@ private:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FGameplayTagContainer TestTagsContainer;
+	FGameplayTagContainer PrimaryAbilityTagsContainer;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Primary Attack")
