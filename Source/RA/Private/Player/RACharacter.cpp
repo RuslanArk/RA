@@ -2,15 +2,17 @@
 
 #include "Player/RACharacter.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/RAAbilitySystemComponent.h"
 
 #include "AbilitySystemComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 
-DEFINE_LOG_CATEGORY(LogTemplateCharacter);
+DEFINE_LOG_CATEGORY_STATIC(LogRACharacter, All, All);
 
 //////////////////////////////////////////////////////////////////////////
 // ARACharacter
@@ -40,12 +42,23 @@ ARACharacter::ARACharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	MeleeAttackCollision = CreateDefaultSubobject<USphereComponent>("Melee AttackCollision");
+	MeleeAttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MeleeAttackCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
+	MeleeAttackCollision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	MeleeAttackCollision->SetIsReplicated(true);
 }
 
 void ARACharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	if (HasAuthority() && MeleeAttackCollision)
+	{
+		MeleeAttackCollision->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, MeleeCollisionAttachmentSocketName);
+		MeleeAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ARACharacter::OnMeleeColliderBeginOverlap);
+	}
 }
 
 void ARACharacter::GiveDefaultAbilities()
@@ -80,6 +93,22 @@ void ARACharacter::ActivatePrimaryAbility(const FGameplayTagContainer& PrimaryTa
 	if (UAbilitySystemComponent* AbilitySystemComp = GetAbilitySystemComponent())
 	{
 		AbilitySystemComp->TryActivateAbilitiesByTag(PrimaryTags);
+	}
+}
+
+void ARACharacter::OnMeleeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!HasAuthority() || !AbilitySystemComponent) return;
+	
+	if (OtherActor && OtherActor != this)
+	{
+		FGameplayEventData EventData;
+		EventData.Instigator = this;
+		EventData.Target = OtherActor;
+		EventData.TargetData = UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(OtherActor);
+		
+		AbilitySystemComponent->HandleGameplayEvent(MeleeAttackEventTag, &EventData);
 	}
 }
 

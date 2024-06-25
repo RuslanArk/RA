@@ -4,17 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "RACharacter.generated.h"
 
+class USphereComponent;
 class URAAttributes;
-struct FGameplayTagContainer;
 class UGameplayAbility;
 class URAAbilitySystemComponent;
 class UGameplayEffect;
-
-DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
 class ARACharacter : public ACharacter, public IAbilitySystemInterface
@@ -36,10 +35,16 @@ public:
 	void GiveDefaultAbilities();
 	void InitDefaultAttributes();
 
+	USphereComponent* GetMeleeCollision() const { return MeleeAttackCollision; }
+
 protected:
 	UFUNCTION(BlueprintCallable)
 	virtual void ActivatePrimaryAbility(const FGameplayTagContainer& PrimaryTags);
 
+private:
+	UFUNCTION()
+	void OnMeleeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	
 protected:
 	UPROPERTY()
 	TObjectPtr<URAAbilitySystemComponent> AbilitySystemComponent;
@@ -53,5 +58,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Ability")
 	TSubclassOf<UGameplayEffect> DefaultAttributesEffect;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Melee")
+	USphereComponent* MeleeAttackCollision = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Melee")
+	FName MeleeCollisionAttachmentSocketName { "MeleeSocket" };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Melee")
+	FGameplayTag MeleeAttackEventTag {};
+	
 };
 

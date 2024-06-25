@@ -47,11 +47,17 @@ public:
 private:
 	UFUNCTION()
 	void OnMontageFinished();
+
+	UFUNCTION()
+	void OnEventReceived(FGameplayEventData Payload);
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName MontageTaskInstanceName { TEXT("None") };
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Melee")
+	FGameplayTag MeleeAttackEventTag {};
+		
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UAnimMontage* MeleeAttackMontage = nullptr;
