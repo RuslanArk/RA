@@ -58,6 +58,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Ability")
 	TSubclassOf<UGameplayEffect> DefaultAttributesEffect;
 
+	// LEVEL
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float CharacterLevel = 1.0f;
+	// MElEE ABILITY STUFF
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Melee")
 	USphereComponent* MeleeAttackCollision = nullptr;
 
@@ -66,6 +70,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Melee")
 	FGameplayTag MeleeAttackEventTag {};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Melee")
+	TSubclassOf<UGameplayEffect> MeleeEffect = nullptr;
+	// RECOVERY EFFECTS	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Melee")
+	TSubclassOf<UGameplayEffect> BasicRecoveryEffect = nullptr;
 	
 };
 

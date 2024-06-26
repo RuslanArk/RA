@@ -13,6 +13,9 @@ void URAMeleeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	// Applies Cooldown and Cost effects
+	CommitAbility(Handle, ActorInfo, ActivationInfo);
+	
 	if (!MeleeAttackMontage)
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);

@@ -109,6 +109,24 @@ void ARACharacter::OnMeleeColliderBeginOverlap(UPrimitiveComponent* OverlappedCo
 		EventData.TargetData = UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(OtherActor);
 		
 		AbilitySystemComponent->HandleGameplayEvent(MeleeAttackEventTag, &EventData);
+
+		if (!MeleeEffect) return;
+		
+		if (IAbilitySystemInterface* AbilityActor = Cast<IAbilitySystemInterface>(OtherActor))
+		{
+			FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+			ContextHandle.AddSourceObject(this);
+
+			const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(MeleeEffect, CharacterLevel, ContextHandle);
+			if (!SpecHandle.IsValid()) return;
+				
+			AbilityActor->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+			const FGameplayEffectSpecHandle RecoverySpecHandle = AbilitySystemComponent->MakeOutgoingSpec(BasicRecoveryEffect, CharacterLevel, ContextHandle);
+			if (!RecoverySpecHandle.IsValid()) return;
+				
+			AbilityActor->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*RecoverySpecHandle.Data.Get());
+		}
 	}
 }
 
