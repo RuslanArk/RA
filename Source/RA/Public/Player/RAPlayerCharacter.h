@@ -51,6 +51,7 @@ protected:
 
 private:
 	void InitAbilitySystemComponent();
+	void InitHUD() const;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

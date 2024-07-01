@@ -13,6 +13,7 @@
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "UI/RAInGameHUD.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogPlayerCharacter, All, All);
 
@@ -44,6 +45,18 @@ void ARAPlayerCharacter::InitAbilitySystemComponent()
 	AbilitySystemComponent->InitAbilityActorInfo(RAPlayerState, this);
 	AttributeSet = RAPlayerState->GetAttributes();
 }
+
+void ARAPlayerCharacter::InitHUD() const
+{
+	if (const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (ARAInGameHUD* InGameHUD = Cast<ARAInGameHUD>(PlayerController->GetHUD()))
+		{
+			InGameHUD->Init();
+		}
+	}
+}
+
 // Is called only on the server
 void ARAPlayerCharacter::PossessedBy(AController* NewController)
 {
@@ -52,6 +65,7 @@ void ARAPlayerCharacter::PossessedBy(AController* NewController)
 	InitAbilitySystemComponent();
 	GiveDefaultAbilities();
 	InitDefaultAttributes();
+	InitHUD();
 }
 // Is called on Client when PlayerState is changed
 void ARAPlayerCharacter::OnRep_PlayerState()
@@ -60,6 +74,7 @@ void ARAPlayerCharacter::OnRep_PlayerState()
 
 	InitAbilitySystemComponent();
 	InitDefaultAttributes();
+	InitHUD();
 }
 
 UAbilitySystemComponent* ARAPlayerCharacter::GetAbilitySystemComponent() const

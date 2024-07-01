@@ -13,6 +13,9 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+#define NUMERIC_VALUE(AttributeSetName, PropertyName) \
+	AttributeSetName->Get##PropertyName##Attribute().GetNumericValue(AttributeSetName)
+
 UCLASS()
 class RA_API URAAttributes : public UAttributeSet
 {

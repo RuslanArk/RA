@@ -18,6 +18,7 @@ public class RA : ModuleRules
             "GameplayAbilities",
             "GameplayTags",
             "GameplayTasks",
+            "UMG",
         });
 		
 		PublicIncludePaths.AddRange(new string[]
