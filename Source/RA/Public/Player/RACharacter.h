@@ -40,6 +40,7 @@ public:
 protected:
 	UFUNCTION(BlueprintCallable)
 	virtual void ActivatePrimaryAbility(const FGameplayTagContainer& PrimaryTags);
+	void ApplyRecoveryEffectsToSelf();
 
 private:
 	UFUNCTION()
@@ -75,7 +76,10 @@ protected:
 	TSubclassOf<UGameplayEffect> MeleeEffect = nullptr;
 	// RECOVERY EFFECTS	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Melee")
-	TSubclassOf<UGameplayEffect> BasicRecoveryEffect = nullptr;
+	TSubclassOf<UGameplayEffect> HealthRecoveryEffect = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Melee")
+	TSubclassOf<UGameplayEffect> StaminaRecoveryEffect = nullptr;
 	
 };
 

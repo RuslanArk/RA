@@ -4,6 +4,7 @@
 #include "UI/InGameUI/RAAttributewWidget.h"
 
 #include "AbilitySystem/AttributeSets/RAAttributes.h"
+#include "Components/ProgressBar.h"
 #include "Player/RAPlayerState.h"
 
 void URAAttributesWidget::BindToAttributes()
@@ -26,11 +27,13 @@ void URAAttributesWidget::BindToAttributes()
 		[this, Attributes](const FOnAttributeChangeData& Data)->void
 		{
 			HealthPercent = Data.NewValue / NUMERIC_VALUE(Attributes, MaxHealth);
+			HealthBar->SetPercent(HealthPercent);
 		});
 	
 	AbilityComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetStaminaAttribute()).AddLambda(
 		[this, Attributes](const FOnAttributeChangeData& Data)->void
 		{
-			StaminaPercent = Data.NewValue / NUMERIC_VALUE(Attributes, MaxStamina);asdfsdg
+			StaminaPercent = Data.NewValue / NUMERIC_VALUE(Attributes, MaxStamina);
+			StaminaBar->SetPercent(StaminaPercent);
 		});
 }

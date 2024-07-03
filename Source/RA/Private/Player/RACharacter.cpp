@@ -96,8 +96,24 @@ void ARACharacter::ActivatePrimaryAbility(const FGameplayTagContainer& PrimaryTa
 	}
 }
 
+void ARACharacter::ApplyRecoveryEffectsToSelf()
+{
+	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	ContextHandle.AddSourceObject(this);
+
+	const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(MeleeEffect, CharacterLevel, ContextHandle);
+	if (!SpecHandle.IsValid()) return;
+				
+	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+	const FGameplayEffectSpecHandle RecoverySpecHandle = AbilitySystemComponent->MakeOutgoingSpec(StaminaRecoveryEffect, CharacterLevel, ContextHandle);
+	if (!RecoverySpecHandle.IsValid()) return;
+				
+	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*RecoverySpecHandle.Data.Get());
+}
+
 void ARACharacter::OnMeleeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!HasAuthority() || !AbilitySystemComponent) return;
 	
@@ -122,12 +138,14 @@ void ARACharacter::OnMeleeColliderBeginOverlap(UPrimitiveComponent* OverlappedCo
 				
 			AbilityActor->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 
-			const FGameplayEffectSpecHandle RecoverySpecHandle = AbilitySystemComponent->MakeOutgoingSpec(BasicRecoveryEffect, CharacterLevel, ContextHandle);
-			if (!RecoverySpecHandle.IsValid()) return;
+			const FGameplayEffectSpecHandle HealthRecoverySpecHandle = AbilitySystemComponent->MakeOutgoingSpec(HealthRecoveryEffect, CharacterLevel, ContextHandle);
+			if (!HealthRecoverySpecHandle.IsValid()) return;
 				
-			AbilityActor->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*RecoverySpecHandle.Data.Get());
+			AbilityActor->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*HealthRecoverySpecHandle.Data.Get());
 		}
 	}
+
+	ApplyRecoveryEffectsToSelf();
 }
 
 UAbilitySystemComponent* ARACharacter::GetAbilitySystemComponent() const

@@ -17,6 +17,9 @@ public:
 	void Init();
 
 protected:
+	virtual void BeginPlay() override;
+
+protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<URAAttributesWidget> AttributesWidgetClass = nullptr;
 

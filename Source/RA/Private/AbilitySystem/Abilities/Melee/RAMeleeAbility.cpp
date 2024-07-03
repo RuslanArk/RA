@@ -51,6 +51,5 @@ void URAMeleeAbility::OnMontageFinished()
 void URAMeleeAbility::OnEventReceived(FGameplayEventData Payload)
 {
 	if (!Payload.Target) return;
-
 	
 }
