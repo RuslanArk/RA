@@ -9,7 +9,7 @@
 #include "Logging/LogMacros.h"
 #include "RACharacter.generated.h"
 
-class USphereComponent;
+class UBoxComponent;
 class URAAttributes;
 class UGameplayAbility;
 class URAAbilitySystemComponent;
@@ -35,7 +35,7 @@ public:
 	void GiveDefaultAbilities();
 	void InitDefaultAttributes();
 
-	USphereComponent* GetMeleeCollision() const { return MeleeAttackCollision; }
+	UBoxComponent* GetMeleeCollision() const { return MeleeCombatCollision; }
 
 protected:
 	UFUNCTION(BlueprintCallable)
@@ -45,7 +45,9 @@ protected:
 private:
 	UFUNCTION()
 	void OnMeleeColliderBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
-	
+
+	UFUNCTION(Server, Reliable)
+	void Server_ExecuteMeleeAttack(AActor* Victim);
 protected:
 	UPROPERTY()
 	TObjectPtr<URAAbilitySystemComponent> AbilitySystemComponent;
@@ -64,7 +66,7 @@ protected:
 	float CharacterLevel = 1.0f;
 	// MElEE ABILITY STUFF
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Melee")
-	USphereComponent* MeleeAttackCollision = nullptr;
+	UBoxComponent* MeleeCombatCollision = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Melee")
 	FName MeleeCollisionAttachmentSocketName { "MeleeSocket" };

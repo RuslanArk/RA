@@ -3,7 +3,7 @@
 
 #include "Animation/AnimNotifies/RAMeleeAttackState.h"
 
-#include "Components/SphereComponent.h"
+#include "Components/BoxComponent.h"
 #include "Player/RACharacter.h"
 
 void URAMeleeAttackState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
@@ -14,6 +14,7 @@ void URAMeleeAttackState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSeq
 	if (!MeshComp) return;
 
 	const ARACharacter* Attacker = Cast<ARACharacter>(MeshComp->GetOwner());
+	
 	if (!Attacker || !Attacker->GetMeleeCollision()) return;
 
 	Attacker->GetMeleeCollision()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -27,6 +28,7 @@ void URAMeleeAttackState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSeque
 	if (!MeshComp) return;
 
 	const ARACharacter* Attacker = Cast<ARACharacter>(MeshComp->GetOwner());
+	
 	if (!Attacker || !Attacker->GetMeleeCollision()) return;
 
 	Attacker->GetMeleeCollision()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
